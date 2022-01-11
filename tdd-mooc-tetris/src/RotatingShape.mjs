@@ -6,7 +6,7 @@ export class RotatingShape {
     color;
     column;
 
-    constructor(shape, positions = 4, rotated = false, color = "x") {
+    constructor(shape, positions = 4, rotated = false, color = "x", row = 0) {
         let splitShape = shape.split("\n").map(s=>s.trim());
         let size = splitShape.length;
         let arr2d = this.make2dArray(size)
@@ -19,7 +19,7 @@ export class RotatingShape {
         this.shape = arr2d;
         this.positions = positions;
         this.rotated = rotated;
-        this.row = 0;
+        this.row = row;
         this.color = color;
     }
 
@@ -30,6 +30,23 @@ export class RotatingShape {
         }
         return arr2d;
     }
+
+    goDown() {
+        this.row ++;
+    }
+
+    setColumn(col) {
+        let middle = this.findMiddle();
+        this.column = col-middle;
+    }
+
+    findMiddle() {
+        let middle = Math.floor(this.shape.length / 2);
+        if(this.shape.length % 2 == 0) {
+          middle -= 1;
+        }
+        return middle;
+      }
 
     toString() {
         return this.shapeToString(this.shape);
@@ -54,7 +71,7 @@ export class RotatingShape {
                 newArray[i][j] = this.shape[j][size-i-1];
             }
         }
-        return new RotatingShape(this.shapeToString(newArray).trim(), this.positions, !this.rotated);
+        return this.rotatingShapeFactory(newArray);
     }
 
     handleRotateRight() {
@@ -65,7 +82,11 @@ export class RotatingShape {
                 newArray[i][j] = this.shape[size-j-1][i];
             }
         }
-        return new RotatingShape(this.shapeToString(newArray).trim(), this.positions, !this.rotated);
+        return this.rotatingShapeFactory(newArray);
+    }
+
+    rotatingShapeFactory(array) {
+        return new RotatingShape(this.shapeToString(array).trim(), this.positions, !this.rotated, this.color, this.row);
     }
 
     rotateLeft() {

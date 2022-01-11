@@ -17,5 +17,13 @@ export class Block {
         arr2d[i] = new Array(size);
     }
     return arr2d;
+  }
+
+  goDown() {
+    this.row ++;
 }
+
+  setColumn(col) {
+    this.column = col
+  }
 }
