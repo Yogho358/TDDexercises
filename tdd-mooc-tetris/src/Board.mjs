@@ -51,7 +51,12 @@ export class Board {
   }
 
   draw(row,col, board) {
-    if (this.hasFalling() && this.fallingBlock.row == row && col == 1) {
+    let middle = Math.floor(this.width / 2);
+    if(this.width % 2 == 0) {
+      middle -= 1;
+    }
+
+    if (this.hasFalling() && this.fallingBlock.row == row && col == middle) {
       return board + this.fallingBlock.color;
     }
     for (let i = 0; i < this.stoppedBlocks.length; i++) {
