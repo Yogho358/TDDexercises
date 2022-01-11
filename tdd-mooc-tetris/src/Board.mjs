@@ -1,3 +1,5 @@
+import { Utils } from "./Utils.mjs";
+
 export class Board {
   width;
   height;
@@ -9,7 +11,7 @@ export class Board {
     this.width = width;
     this.height = height;
     this.EMPTY = ".";
-    this.stoppedBlocks = []
+    this.stoppedBlocks = Utils.make2dArray(this.height, this.width)
   }
 
   toString() {
@@ -24,12 +26,13 @@ export class Board {
   }
 
   drop(block) {
-
+    
     if (this.hasFalling()) {
       throw "already falling"
     }
     block.setColumn(this.findMiddleOfBoard())
     this.fallingBlock = block;
+    this.fallingBlock.row = 0;
   }
 
   findMiddleOfBoard() {
@@ -41,19 +44,38 @@ export class Board {
   }
 
   tick() {
-    if (this.fallingBlock.row == this.height-1 || this.hitsBlock(this.fallingBlock.row)) {
-      this.stoppedBlocks = this.stoppedBlocks.concat(this.fallingBlock);
+    if (!this.hasFalling()) {
+      return
+    }
+    if (this.stopFallingBlock()) {
+      this.addToStoppedBlocks();
       this.fallingBlock = null;
       return;
     }
     this.fallingBlock.goDown();
   }
 
-  hitsBlock(row) {
-    for (let i = 0; i < this.stoppedBlocks.length; i++) {
-      let block  =this.stoppedBlocks[i];
-      if (block.row == row+1) {
-        return true;
+  addToStoppedBlocks() {
+    let size = this.fallingBlock.shape.length;
+    for (let row = 0; row < size; row++) {
+      for (let col = 0; col < size; col++) {
+        if (this.fallingBlock.shape[row][col] == this.fallingBlock.color){
+          this.stoppedBlocks[row+this.fallingBlock.row][col+this.fallingBlock.column] = this.fallingBlock.color;
+        }
+      }
+    }
+  }
+
+  stopFallingBlock () {
+    let size = this.fallingBlock.shape.length;
+    for (let row = 0; row < size; row++) {
+      for (let col = 0; col < size; col++) {
+        if (this.fallingBlock.shape[row][col] == this.fallingBlock.color && row+this.fallingBlock.row == this.height-1) {      
+          return true;
+        }
+        if (this.fallingBlock.shape[row][col] == this.fallingBlock.color && this.stoppedBlocks[row+this.fallingBlock.row+1][this.fallingBlock.column+col] != undefined) {
+          return true;
+        }
       }
     }
     return false;
@@ -70,11 +92,8 @@ export class Board {
       }
     }
 
-    for (let i = 0; i < this.stoppedBlocks.length; i++) {
-      let block = this.stoppedBlocks[i];
-      if (block.row == row && col == 1) { 
-        return board + block.color;
-      }
+    if(this.stoppedBlocks[row][col] != undefined) {
+      return board + this.stoppedBlocks[row][col];
     }
     return board + this.EMPTY;
   }

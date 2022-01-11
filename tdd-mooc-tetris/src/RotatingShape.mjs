@@ -1,3 +1,5 @@
+import { Utils } from "./Utils.mjs";
+
 export class RotatingShape {
     shape;
     positions;
@@ -9,7 +11,7 @@ export class RotatingShape {
     constructor(shape, positions = 4, rotated = false, color = "x", row = 0) {
         let splitShape = shape.split("\n").map(s=>s.trim());
         let size = splitShape.length;
-        let arr2d = this.make2dArray(size)
+        let arr2d = Utils.make2dArray(size, size)
         for (let i = 0; i < size; i++) {
             let s = splitShape[i];
             for (let j = 0; j < size; j++) {
@@ -21,14 +23,6 @@ export class RotatingShape {
         this.rotated = rotated;
         this.row = row;
         this.color = color;
-    }
-
-    make2dArray(size) {
-        let arr2d = new Array(size);
-        for (let i = 0; i < size; i++) {
-            arr2d[i] = new Array(size);
-        }
-        return arr2d;
     }
 
     goDown() {
@@ -65,7 +59,7 @@ export class RotatingShape {
 
     handleRotateLeft() {
         let size = this.shape.length;
-        let newArray = this.make2dArray(size);
+        let newArray = Utils.make2dArray(size);
         for(let i = 0; i<size;i++) {
             for (let j =0; j<size;j++) {
                 newArray[i][j] = this.shape[j][size-i-1];
@@ -76,7 +70,7 @@ export class RotatingShape {
 
     handleRotateRight() {
         let size = this.shape.length;
-        let newArray = this.make2dArray(size);
+        let newArray = Utils.make2dArray(size);
         for(let i = 0; i<size;i++) {
             for (let j =0; j<size;j++) {
                 newArray[i][j] = this.shape[size-j-1][i];
