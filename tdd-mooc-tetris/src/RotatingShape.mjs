@@ -4,6 +4,7 @@ export class RotatingShape {
     rotated;
     row;
     color;
+    column;
 
     constructor(shape, positions = 4, rotated = false, color = "x") {
         let splitShape = shape.split("\n").map(s=>s.trim());

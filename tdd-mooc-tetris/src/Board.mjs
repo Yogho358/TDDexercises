@@ -28,7 +28,16 @@ export class Board {
     if (this.hasFalling()) {
       throw "already falling"
     }
+    block.column = this.findMiddleOfBoard()
     this.fallingBlock = block;
+  }
+
+  findMiddleOfBoard() {
+    let middle = Math.floor(this.width / 2);
+    if(this.width % 2 == 0) {
+      middle -= 1;
+    }
+    return middle;
   }
 
   tick() {
@@ -51,14 +60,28 @@ export class Board {
   }
 
   draw(row,col, board) {
-    let middle = Math.floor(this.width / 2);
-    if(this.width % 2 == 0) {
-      middle -= 1;
-    }
+    let middle = this.findMiddleOfBoard()
 
     if (this.hasFalling() && this.fallingBlock.row == row && col == middle) {
       return board + this.fallingBlock.color;
     }
+
+    if (this.hasFalling()){
+      for (let checkedRow = 0; checkedRow < 5; checkedRow++){
+        if (row+checkedRow >= this.fallingBlock.shape.length){
+          continue;
+        }
+        for (let checkedCol = -5; checkedCol <= 5; checkedCol++) {
+          if (middle+checkedCol < 0 || middle+checkedCol >= this.fallingBlock.shape.length){
+            continue;
+          }
+          if (this.fallingBlock.shape[row+checkedRow][col+checkedCol] == this.fallingBlock.color){
+            return board +this.fallingBlock.color;
+          }
+        }
+    }
+    }
+
     for (let i = 0; i < this.stoppedBlocks.length; i++) {
       let block = this.stoppedBlocks[i];
       if (block.row == row && col == 1) { 
