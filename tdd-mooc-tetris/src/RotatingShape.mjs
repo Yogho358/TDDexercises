@@ -2,8 +2,10 @@ export class RotatingShape {
     shape;
     positions;
     rotated;
+    row;
+    color;
 
-    constructor(shape, positions = 4, rotated = false) {
+    constructor(shape, positions = 4, rotated = false, color = "x") {
         let splitShape = shape.split("\n").map(s=>s.trim());
         let size = splitShape.length;
         let arr2d = this.make2dArray(size)
@@ -16,6 +18,8 @@ export class RotatingShape {
         this.shape = arr2d;
         this.positions = positions;
         this.rotated = rotated;
+        this.row = 0;
+        this.color = color;
     }
 
     make2dArray(size) {
