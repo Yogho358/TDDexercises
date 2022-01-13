@@ -72,7 +72,7 @@ describe("Moving falling tetromino", () => {
         );
     });
 
-    it("wall kicks from board's edge", () => {
+    it("wall kick from board's right edge", () => {
         board.drop(Tetromino.T_SHAPE);
         board.tick();
         board.rotateLeft();
@@ -86,6 +86,23 @@ describe("Moving falling tetromino", () => {
              ..........
              ..........`
         );
-    })
+    });
+
+    it("wall kick from board's left edge", () => {
+        board.drop(Tetromino.T_SHAPE);
+        board.tick();
+        board.rotateRight();
+        moveTenLeft(board);
+        board.rotateLeft();
+        expect(board.toString()).to.equalShape(
+            `..........
+             .T........
+             TTT.......
+             ..........
+             ..........
+             ..........`
+        );
+    });
+    
 
 });

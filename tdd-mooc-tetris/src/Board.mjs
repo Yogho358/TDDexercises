@@ -25,8 +25,34 @@ export class Board {
     return board;
   }
 
+  setFallingBlockAfterKick(block) {
+    if(!this.runBlockConstrainCheck(this.checkOverlap, block)) {
+      this.fallingBlock = block;
+      return true;
+    }
+    return false;
+  }
+
+  checkKick(block) {
+    if(this.setFallingBlockAfterKick(block)) {
+      return;
+    }
+    let col = block.column;
+   block.column--;
+    if(this.setFallingBlockAfterKick(block)) {
+      return;
+    }
+    block.column = col;
+    block.column++;
+    if(this.setFallingBlockAfterKick(block)) {
+      return
+    }
+    block.column = col;
+  }
+
   rotateLeft() {
-    this.fallingBlock = this.fallingBlock.rotateLeft();
+    let newBlock = this.fallingBlock.rotateLeft();
+    this.checkKick(newBlock);
   }
 
   rotateRight() {
@@ -115,7 +141,7 @@ export class Board {
     }
     return false;
   }
-  
+
   checkOverlap(row, col, block, height, width, stoppedBlocks, EMPTY) {
     return (row+block.row >= height || col+block.column >= width || col+block.column < 0);
   }
