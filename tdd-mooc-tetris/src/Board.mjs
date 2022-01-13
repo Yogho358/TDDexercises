@@ -31,13 +31,13 @@ export class Board {
 
   rotateRight() {
     let newBlock = this.fallingBlock.rotateRight();
-    if(!this.checkFallingBlockConstrained(false, false, false, true, newBlock)) {
+    if(!this.runBlockConstrainCheck(this.checkOverlap, newBlock)) {
       this.fallingBlock = newBlock;
       return;
     }
     let blockToLeft = newBlock;
     blockToLeft.column--;
-    if(!this.checkFallingBlockConstrained(false, false, false, true, blockToLeft)) {
+    if(!this.runBlockConstrainCheck(this.checkOverlap, newBlock)) {
       this.fallingBlock = blockToLeft;
     }
   }
@@ -65,7 +65,7 @@ export class Board {
     if (!this.hasFalling()) {
       return;
     }
-    if (this.checkFallingBlockConstrained(true,false, false)) {
+    if (this.runBlockConstrainCheck(this.checkCanMoveDown)) {
       this.addToStoppedBlocks();
       this.fallingBlock = null;
       return;
@@ -74,14 +74,14 @@ export class Board {
   }
 
   moveLeft() {
-    if (!this.hasFalling() || this.checkFallingBlockConstrained(false,true,false)) {
+    if (!this.hasFalling() || this.runBlockConstrainCheck(this.checkCanMoveLeft)) {
       return;
     }
     this.fallingBlock.column--;
   }
 
   moveRight() {
-    if (!this.hasFalling() || this.checkFallingBlockConstrained(false,false,true)) {
+    if (!this.hasFalling() || this.runBlockConstrainCheck(this.checkCanMoveRight)) {
       return;
     }
     this.fallingBlock.column++;
@@ -102,49 +102,43 @@ export class Board {
     }
   }
 
-  checkFallingBlockConstrained(moveDown = false, moveLeft = false, moveRight = false, overlap = false, block = this.fallingBlock,) {
+  runBlockConstrainCheck(checker, block = this.fallingBlock) {
     let size = block.shape.length;
     for (let row = 0; row < size; row++) {
       for (let col = 0; col < size; col++) {
         if (block.shape[row][col] == block.color) {
-          if(
-            (moveDown && this.checkCanMoveDown(row, col, block)) ||
-            (moveLeft && this.checkCanMoveLeft(row, col, block)) ||
-            (moveRight && this.checkCanMoveRight(row, col, block)) ||
-            (overlap && this.checkOverlap(row, col, block))
-            ) {
-              return true;
-            }
-        
-        }      
+          if (checker(row, col, block, this.height, this.width, this.stoppedBlocks, this.EMPTY)) {
+            return true;
+          }
+        }
       }
     }
     return false;
   }
-
-  checkOverlap(row, col, block) {
-    return (row+block.row >= this.height || col+block.column >= this.width || col+block.column < 0);
+  
+  checkOverlap(row, col, block, height, width, stoppedBlocks, EMPTY) {
+    return (row+block.row >= height || col+block.column >= width || col+block.column < 0);
   }
 
-  checkCanMoveDown(row, col, block) {
-    if (row+block.row == this.height-1) {
+  checkCanMoveDown(row, col, block, height, width, stoppedBlocks, EMPTY) {
+    if (row+block.row == height-1) {
       return true
     }
-    return this.stoppedBlocks[row+block.row+1][block.column+col] != this.EMPTY;
+    return stoppedBlocks[row+block.row+1][block.column+col] != EMPTY;
   }
 
-  checkCanMoveLeft(row, col, block) {
+  checkCanMoveLeft(row, col, block, height, width, stoppedBlocks, EMPTY) {
     if (col+block.column <= 0) {
       return true;
     }
-    return this.stoppedBlocks[row+block.row][block.column+col-1] != this.EMPTY;
+    return stoppedBlocks[row+block.row][block.column+col-1] != EMPTY;
   }
 
-  checkCanMoveRight(row, col, block) {
-    if(col+block.column == this.width -1) {
+  checkCanMoveRight(row, col, block, height, width, stoppedBlocks, EMPTY) {
+    if(col+block.column == width -1) {
       return true;
     }
-    return this.stoppedBlocks[row+block.row][block.column+col+1] != this.EMPTY
+    return stoppedBlocks[row+block.row][block.column+col+1] != EMPTY
   }
 
   draw(row,col, board) {
