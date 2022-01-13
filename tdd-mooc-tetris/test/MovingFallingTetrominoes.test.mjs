@@ -129,7 +129,7 @@ describe("Moving falling tetromino", () => {
         );
     });
 
-    it("stops when hitting stopped block on left", () => {
+    it("stops when hitting stopped block on right", () => {
         board.drop(Tetromino.T_SHAPE);
         moveTenRight(board);
         moveTenDown(board);
@@ -148,5 +148,19 @@ describe("Moving falling tetromino", () => {
         );
     });
 
+    it("stops when moved down on stopped block", () => {
+        board.drop(Tetromino.T_SHAPE);
+        moveTenDown(board);
+        board.drop(Tetromino.T_SHAPE);
+        moveTenDown(board);
+        expect(board.toString()).to.equalShape(
+            `..........
+             ..........
+             ....T.....
+             ...TTT....
+             ....T.....
+             ...TTT....`
+        );
+    })
 
 });
