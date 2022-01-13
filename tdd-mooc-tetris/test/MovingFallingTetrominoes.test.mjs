@@ -2,6 +2,24 @@ import { expect } from "chai";
 import { Board } from "../src/Board.mjs";
 import { Tetromino } from "../src/Tetromino.mjs";
 
+function moveTenDown(board) {
+    for (let i = 0; i < 10; i++) {
+        board.moveDown();
+    }
+}
+
+function moveTenLeft(board) {
+    for (let i = 0; i < 10; i++) {
+        board.moveLeft();
+    }
+}
+
+function moveTenRight(board) {
+    for (let i = 0; i < 10; i++) {
+        board.moveRight();
+    }
+}
+
 describe("Moving falling tetromino", () => {
     let board;
     beforeEach(() => {
@@ -55,9 +73,7 @@ describe("Moving falling tetromino", () => {
 
     it("can't be moved over the board's side to the left", () => {
         board.drop(Tetromino.T_SHAPE);
-        for (let i = 0; i < 10; i++) {
-            board.moveLeft();
-        }
+        moveTenLeft(board)
         expect(board.toString()).to.equalShape(
             `.T........
              TTT.......
@@ -70,9 +86,7 @@ describe("Moving falling tetromino", () => {
 
     it("can't be moved over the board's side to the right", () => {
         board.drop(Tetromino.T_SHAPE);
-        for (let i = 0; i < 10; i++) {
-            board.moveRight();
-        }
+        moveTenRight(board)
         expect(board.toString()).to.equalShape(
             `........T.
              .......TTT
@@ -85,9 +99,7 @@ describe("Moving falling tetromino", () => {
 
     it("can't be moved though the floor", () => {
         board.drop(Tetromino.T_SHAPE);
-        for (let i = 0; i < 10; i++) {
-            board.moveDown();
-        }
+        moveTenDown(board)
         expect(board.toString()).to.equalShape(
             `..........
              ..........
@@ -95,6 +107,44 @@ describe("Moving falling tetromino", () => {
              ..........
              ....T.....
              ...TTT....`
+        );
+    });
+
+    it("stops when hitting stopped block on left", () => {
+        board.drop(Tetromino.T_SHAPE);
+        moveTenLeft(board);
+        moveTenDown(board);
+        board.drop(Tetromino.O_SHAPE);
+        board.tick();
+        board.tick();
+        board.tick();
+        moveTenLeft(board);
+        expect(board.toString()).to.equalShape(
+            `..........
+             ..........
+             ..........
+             ..OO......
+             .TOO......
+             TTT.......`
+        );
+    });
+
+    it("stops when hitting stopped block on left", () => {
+        board.drop(Tetromino.T_SHAPE);
+        moveTenRight(board);
+        moveTenDown(board);
+        board.drop(Tetromino.O_SHAPE);
+        board.tick();
+        board.tick();
+        board.tick();
+        moveTenRight(board);
+        expect(board.toString()).to.equalShape(
+            `..........
+             ..........
+             ..........
+             ......OO..
+             ......OOT.
+             .......TTT`
         );
     });
 
