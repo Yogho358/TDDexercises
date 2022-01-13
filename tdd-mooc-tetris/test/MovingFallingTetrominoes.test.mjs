@@ -66,7 +66,37 @@ describe("Moving falling tetromino", () => {
              ..........
              ..........`
         );
-    })
+    });
+
+    it("can't be moved over the board's side to the right", () => {
+        board.drop(Tetromino.T_SHAPE);
+        for (let i = 0; i < 10; i++) {
+            board.moveRight();
+        }
+        expect(board.toString()).to.equalShape(
+            `........T.
+             .......TTT
+             ..........
+             ..........
+             ..........
+             ..........`
+        );
+    });
+
+    it("can't be moved though the floor", () => {
+        board.drop(Tetromino.T_SHAPE);
+        for (let i = 0; i < 10; i++) {
+            board.moveDown();
+        }
+        expect(board.toString()).to.equalShape(
+            `..........
+             ..........
+             ..........
+             ..........
+             ....T.....
+             ...TTT....`
+        );
+    });
 
 
 });

@@ -57,14 +57,14 @@ export class Board {
   }
 
   moveLeft() {
-    if (!this.hasFalling()) {
+    if (!this.hasFalling() || this.stopFallingBlock()) {
       return;
     }
     this.fallingBlock.column--;
   }
 
   moveRight() {
-    if(!this.hasFalling()) {
+    if (!this.hasFalling() || this.stopFallingBlock()) {
       return;
     }
     this.fallingBlock.column++;
@@ -89,12 +89,31 @@ export class Board {
     let size = this.fallingBlock.shape.length;
     for (let row = 0; row < size; row++) {
       for (let col = 0; col < size; col++) {
-        if (this.fallingBlock.shape[row][col] == this.fallingBlock.color && (row+this.fallingBlock.row == this.height-1 || this.stoppedBlocks[row+this.fallingBlock.row+1][this.fallingBlock.column+col] != this.EMPTY)) {      
+        if (this.fallingBlock.shape[row][col] == this.fallingBlock.color && (this.checkLandsOnFloor(row) || 
+                                                                             this.checkLandsOnBlock(row, col) ||
+                                                                             this.checkHitsLeftWall(col) ||
+                                                                             this.checkHitsRightWall(col))) {      
           return true;
         }      
       }
     }
     return false;
+  }
+
+  checkLandsOnFloor(row) {
+    return row+this.fallingBlock.row == this.height-1
+  }
+
+  checkLandsOnBlock(row, col) {
+    return this.stoppedBlocks[row+this.fallingBlock.row+1][this.fallingBlock.column+col] != this.EMPTY;
+  }
+
+  checkHitsLeftWall(col) {
+    return col+this.fallingBlock.column <= 0;
+  } 
+
+  checkHitsRightWall(col) {
+    return col+this.fallingBlock.column == this.width -1;
   }
 
   draw(row,col, board) {
