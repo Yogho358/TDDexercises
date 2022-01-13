@@ -8,7 +8,7 @@ export class RotatingShape {
     color;
     column;
 
-    constructor(shape, positions = 4, rotated = false, color = "x", row = 0) {
+    constructor(shape, positions = 4, rotated = false, color = "x", row = 0, column = 0) {
         let splitShape = shape.split("\n").map(s=>s.trim());
         let size = splitShape.length;
         let arr2d = Utils.make2dArray(size, size)
@@ -23,6 +23,7 @@ export class RotatingShape {
         this.rotated = rotated;
         this.row = row;
         this.color = color;
+        this.column = column
     }
 
     setColumn(col) {
@@ -76,7 +77,7 @@ export class RotatingShape {
     }
 
     rotatingShapeFactory(array) {
-        return new RotatingShape(this.shapeToString(array).trim(), this.positions, !this.rotated, this.color, this.row);
+        return new RotatingShape(this.shapeToString(array).trim(), this.positions, !this.rotated, this.color, this.row, this.column);
     }
 
     rotateLeft() {
