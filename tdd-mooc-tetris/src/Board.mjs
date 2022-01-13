@@ -11,7 +11,7 @@ export class Board {
     this.width = width;
     this.height = height;
     this.EMPTY = ".";
-    this.stoppedBlocks = Utils.make2dArray(this.height, this.width)
+    this.stoppedBlocks = Utils.make2dArray(this.height, this.width, this.EMPTY)
   }
 
   toString() {
@@ -33,6 +33,7 @@ export class Board {
     block.setColumn(this.findMiddleOfBoard())
     this.fallingBlock = block;
     this.fallingBlock.row = 0;
+    this.fallingBlock.rotated = false;
   }
 
   findMiddleOfBoard() {
@@ -45,14 +46,32 @@ export class Board {
 
   tick() {
     if (!this.hasFalling()) {
-      return
+      return;
     }
     if (this.stopFallingBlock()) {
       this.addToStoppedBlocks();
       this.fallingBlock = null;
       return;
     }
-    this.fallingBlock.goDown();
+    this.fallingBlock.row++;
+  }
+
+  moveLeft() {
+    if (!this.hasFalling()) {
+      return;
+    }
+    this.fallingBlock.column--;
+  }
+
+  moveRight() {
+    if(!this.hasFalling()) {
+      return;
+    }
+    this.fallingBlock.column++;
+  }
+
+  moveDown() {
+    this.tick();
   }
 
   addToStoppedBlocks() {
@@ -70,12 +89,9 @@ export class Board {
     let size = this.fallingBlock.shape.length;
     for (let row = 0; row < size; row++) {
       for (let col = 0; col < size; col++) {
-        if (this.fallingBlock.shape[row][col] == this.fallingBlock.color && row+this.fallingBlock.row == this.height-1) {      
+        if (this.fallingBlock.shape[row][col] == this.fallingBlock.color && (row+this.fallingBlock.row == this.height-1 || this.stoppedBlocks[row+this.fallingBlock.row+1][this.fallingBlock.column+col] != this.EMPTY)) {      
           return true;
-        }
-        if (this.fallingBlock.shape[row][col] == this.fallingBlock.color && this.stoppedBlocks[row+this.fallingBlock.row+1][this.fallingBlock.column+col] != undefined) {
-          return true;
-        }
+        }      
       }
     }
     return false;
@@ -92,7 +108,7 @@ export class Board {
       }
     }
 
-    if(this.stoppedBlocks[row][col] != undefined) {
+    if(this.stoppedBlocks[row][col] != this.EMPTY) {
       return board + this.stoppedBlocks[row][col];
     }
     return board + this.EMPTY;

@@ -25,10 +25,6 @@ export class RotatingShape {
         this.color = color;
     }
 
-    goDown() {
-        this.row ++;
-    }
-
     setColumn(col) {
         let middle = this.findMiddle();
         this.column = col-middle;
