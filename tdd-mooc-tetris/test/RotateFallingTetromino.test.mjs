@@ -103,6 +103,119 @@ describe("Moving falling tetromino", () => {
              ..........`
         );
     });
+
+    it("I shape rotates and stops at left edge", () => {
+        board.drop(Tetromino.I_SHAPE);
+        board.tick();
+        board.rotateLeft();
+        moveTenLeft(board);
+
+        expect(board.toString()).to.equalShape(
+            `..........
+             I.........
+             I.........
+             I.........
+             I.........
+             ..........`
+        );
+    });
+
+    it("I shape rotates and stops at right edge", () => {
+        board.drop(Tetromino.I_SHAPE);
+        board.tick();
+        board.rotateRight();
+        moveTenRight(board);
+
+        expect(board.toString()).to.equalShape(
+            `..........
+             .........I
+             .........I
+             .........I
+             .........I
+             ..........`
+        );
+    });
+
+    it("I shape kicks from right wall", () => {
+        board.drop(Tetromino.I_SHAPE);
+        board.tick();
+        board.rotateRight();
+        moveTenRight(board);
+        board.rotateRight();
+
+        expect(board.toString()).to.equalShape(
+            `..........
+             ..........
+             ..........
+             ......IIII
+             ..........
+             ..........`
+        );
+    });
+
+    it("I shape kicks from right wall", () => {
+        board.drop(Tetromino.I_SHAPE);
+        board.tick();
+        board.rotateRight();
+        moveTenLeft(board);
+        board.rotateLeft();
+
+        expect(board.toString()).to.equalShape(
+            `..........
+             ..........
+             ..........
+             IIII......
+             ..........
+             ..........`
+        );
+    });
+    
+    it("wall kick from existing block on left", () => {
+        board.drop(Tetromino.O_SHAPE);
+        moveTenLeft(board);
+        moveTenDown(board);
+        board.drop(Tetromino.O_SHAPE);
+        moveTenLeft(board);
+        moveTenDown(board);
+        board.drop(Tetromino.O_SHAPE);
+        moveTenLeft(board);
+        moveTenDown(board);
+        board.drop(Tetromino.T_SHAPE);
+        board.rotateRight();
+        moveTenLeft(board);
+        board.rotateLeft();
+        expect(board.toString()).to.equalShape(
+            `OO.T......
+             OOTTT.....
+             OO........
+             OO........
+             OO........
+             OO........`
+        );
+    });
+
+    it("wall kick from existing block on right", () => {
+        board.drop(Tetromino.O_SHAPE);
+        moveTenRight(board);
+        moveTenDown(board);
+        board.drop(Tetromino.O_SHAPE);
+        moveTenRight(board);
+        moveTenDown(board);board.drop(Tetromino.O_SHAPE);
+        moveTenRight(board);
+        moveTenDown(board);
+        board.drop(Tetromino.T_SHAPE);
+        board.rotateRight();
+        moveTenRight(board);
+        board.rotateLeft();
+        expect(board.toString()).to.equalShape(
+            `......T.OO
+             .....TTTOO
+             ........OO
+             ........OO
+             ........OO
+             ........OO`
+        );
+    });
     
 
 });
