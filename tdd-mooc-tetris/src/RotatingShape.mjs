@@ -2,33 +2,22 @@ import { Utils } from "./Utils.mjs";
 
 export class RotatingShape {
     shape;
-    positions;
-    rotated;
-    row;
+    currentPosition;
     color;
+    row;
     column;
 
-    constructor(shape, positions = 4, rotated = false, color = "x", row = 0, column = 0) {
-        let splitShape = shape.split("\n").map(s=>s.trim());
-        let size = splitShape.length;
-        let arr2d = Utils.make2dArray(size, size)
-        for (let i = 0; i < size; i++) {
-            let s = splitShape[i];
-            for (let j = 0; j < size; j++) {
-                arr2d[i][j] = s[j];
-            }
-        }
-        this.shape = arr2d;
-        this.positions = positions;
-        this.rotated = rotated;
-        this.row = row;
+    constructor(color = "x", row = 0, column = 0, currentPosition = 0) {
         this.color = color;
-        this.column = column
+        this.row = row;
+        this.column = column;
+        this.currentPosition = currentPosition;
+        this.createShape();
     }
 
     setColumn(col) {
-        let middle = this.findMiddle();
-        this.column = col-middle;
+        
+        this.column = col-1;
     }
 
     findMiddle() {
@@ -54,51 +43,130 @@ export class RotatingShape {
         return res;
     }
 
-    handleRotateLeft() {
-        let size = this.shape.length;
-        let newArray = Utils.make2dArray(size);
-        for(let i = 0; i<size;i++) {
-            for (let j =0; j<size;j++) {
-                newArray[i][j] = this.shape[j][size-i-1];
-            }
+    createTShape() {
+     
+        let shape0 = [".","T",".",
+                      "T","T","T",
+                      ".",".","."]
+        
+
+        
+        let shape1 = [".","T",".",
+                      "T","T",".",
+                      ".","T","."]
+        
+
+       
+        let shape2 = [".",".",".",
+                      "T","T","T",
+                      ".","T","."]
+        
+
+        
+        let shape3 = [".","T",".",
+                      ".","T","T",
+                      ".","T","."]
+        
+        let shape;
+        if (this.currentPosition == 0) {
+            shape = shape0;
         }
-        return this.rotatingShapeFactory(newArray);
+        if (this.currentPosition == 1) {
+            shape = shape1;
+        }
+        if (this.currentPosition == 2) {
+            shape = shape2;
+        }
+        if (this.currentPosition == 3) {
+            shape = shape3;
+        }
+        let grid = Utils.make2dArray(3,3);
+        this.setShape(shape, grid)        
     }
 
-    handleRotateRight() {
-        let size = this.shape.length;
-        let newArray = Utils.make2dArray(size);
-        for(let i = 0; i<size;i++) {
-            for (let j =0; j<size;j++) {
-                newArray[i][j] = this.shape[size-j-1][i];
-            }
+    createIShape() {
+        let shape0 = [".",".",".",".",".",
+                      ".",".",".",".",".",
+                      "I","I","I","I",".",
+                      ".",".",".",".",".",
+                      ".",".",".",".","."]
+        
+
+        
+        let shape1 = [".",".","I",".",".",
+                      ".",".","I",".",".",
+                      ".",".","I",".",".",
+                      ".",".","I",".",".",
+                      ".",".",".",".","."]
+
+        
+        let shape;
+        if (this.currentPosition == 0) {
+            shape = shape0;
         }
-        return this.rotatingShapeFactory(newArray);
+        if (this.currentPosition == 1) {
+            shape = shape1;
+        }
+        if (this.currentPosition == 2) {
+            shape = shape0;
+        }
+        if (this.currentPosition == 3) {
+            shape = shape1;
+        }
+        let grid = Utils.make2dArray(5,5);
+        this.setShape(shape, grid)
     }
 
-    rotatingShapeFactory(array) {
-        return new RotatingShape(this.shapeToString(array).trim(), this.positions, !this.rotated, this.color, this.row, this.column);
+    createOShape() {
+        let shape = [".","O","O",
+                      ".","O","O",
+                      ".",".","."]
+        
+        let grid = Utils.make2dArray(3,3);
+        this.setShape(shape, grid)        
+    }
+
+    setShape(shape, grid) {
+        let i = 0;
+        for (let row = 0; row < grid.length; row++) {
+            for (let col = 0; col < grid.length; col++) {
+                grid[row][col] = shape[i];
+                i++;
+            }
+        }
+        this.shape = grid;
+    }
+
+    createShape() {
+        if (this.color == "T") {
+            this.createTShape();
+        }
+        if (this.color == "I") {
+            this.createIShape();
+        }
+        if(this.color == "O") {
+            this.createOShape();
+        }
     }
 
     rotateLeft() {
-        if (this.positions ==1) {
-            return this;
+        let pos;
+        if (this.currentPosition == 3) {
+            pos = 0;
+        } else {
+            pos = this.currentPosition + 1;
         }
-        if (this.positions == 2 && !this.rotated){
-            return this.handleRotateRight();
-        }
-
-        return this.handleRotateLeft();
+        return new RotatingShape(this.color, this.row, this.column, pos)
     }
 
     rotateRight() {
-        if (this.positions ==1) {
-            return this;
+        let pos;
+        if (this.currentPosition == 0) {
+            pos = 3;
+        } else {
+            pos = this.currentPosition - 1;
         }
-        if (this.positions == 2 && this.rotated){
-            return this.handleRotateLeft();
-        }
-
-        return this.handleRotateRight();
+        return new RotatingShape(this.color, this.row, this.column, pos)
     }
+
 }
