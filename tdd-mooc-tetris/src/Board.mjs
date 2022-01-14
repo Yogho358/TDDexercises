@@ -77,7 +77,7 @@ export class Board {
     }
     block.setColumn(this.findMiddleOfBoard())
     this.fallingBlock = block;
-    this.fallingBlock.row = 0;
+    this.fallingBlock.row = -1;
     this.fallingBlock.rotated = false;
   }
 
