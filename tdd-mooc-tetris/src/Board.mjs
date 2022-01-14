@@ -128,6 +128,21 @@ export class Board {
         }
       }
     }
+    this.checkLineFull()
+  }
+
+  checkLineFull() {
+    for (let row = 0; row < this.height; row++) {
+      let full = true;
+      for (let col = 0; col < this.width; col++) {
+        if (this.stoppedBlocks[row][col] == this.EMPTY) {
+          full = false;
+        }
+      }
+      if (full) {
+        this.stoppedBlocks[row].fill(this.EMPTY)
+      }
+    }
   }
 
   runBlockConstrainCheck(checker, block = this.fallingBlock) {
