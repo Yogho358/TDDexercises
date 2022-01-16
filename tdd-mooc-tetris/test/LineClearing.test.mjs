@@ -75,7 +75,7 @@ describe("Clearing lines", () => {
 
     });
 
-    xit("If making stopped blocks disappear causes line to get full, line disappears", () => {
+    it("If making stopped blocks disappear causes line to get full, line disappears", () => {
         board.drop(Tetromino.O_SHAPE);
         moveTenRight(board);
         moveTenDown(board);

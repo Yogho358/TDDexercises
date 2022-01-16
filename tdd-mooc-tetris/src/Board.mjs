@@ -141,20 +141,28 @@ export class Board {
       }
       if (full) {
         this.stoppedBlocks[row].fill(this.EMPTY)
-        this.makeStoppedBlocksFall(row);
+        this.makeStoppedBlocksFall();
       }
     }
   }
 
-  makeStoppedBlocksFall(currentRow) {
-    for (let row = this.height-2; row >= 0; row--) {
+  makeStoppedBlocksFall() {
+    for (let row = this.height -2; row >= 0; row--) {
       for (let col = 0; col < this.width; col++) {
-        if (this.stoppedBlocks[row+1][col] == this.EMPTY) {
-          this.stoppedBlocks[row+1][col] = this.stoppedBlocks[row][col];
-          this.stoppedBlocks[row][col] = this.EMPTY;
-          this.checkLineFull();
-        }
+        let temp = this.stoppedBlocks[row][col];
+        this.stoppedBlocks[row][col] = this.EMPTY;
+        let newRow = this.findRowToFallIn(row, col);
+        this.stoppedBlocks[newRow][col] = temp;
       }
+    }
+  }
+
+  findRowToFallIn(row, col) {
+    for (row; row < this.height; row++) {
+      let nextRow = row+1;
+      if (nextRow == this.height || this.stoppedBlocks[nextRow][col] != this.EMPTY) {
+        return row;
+      } 
     }
   }
 
