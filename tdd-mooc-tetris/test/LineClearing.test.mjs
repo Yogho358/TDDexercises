@@ -26,7 +26,7 @@ describe("Clearing lines", () => {
         board = new Board(10, 6);
     });
 
-    it("line clears when full", () => {
+    it("Line clears when full", () => {
 
         board.drop(Tetromino.T_SHAPE);
         board.rotateRight();
@@ -52,6 +52,66 @@ describe("Clearing lines", () => {
              ..........
              .T..T.IIII`
           );
-    })
+    });
+
+    it("Stopped blocks fall when line under disappears", () => {
+        board.drop(Tetromino.T_SHAPE);
+        moveTenLeft(board);
+        moveTenDown(board);
+        board.drop(Tetromino.T_SHAPE);
+        moveTenDown(board);
+        board.drop(Tetromino.I_SHAPE);
+        moveTenRight(board);
+        moveTenDown(board);
+
+        expect(board.toString()).to.equalShape(
+            `..........
+             ..........
+             ..........
+             ..........
+             ..........
+             .T..T.....`
+          );
+
+    });
+
+    xit("If making stopped blocks disappear causes line to get full, line disappears", () => {
+        board.drop(Tetromino.O_SHAPE);
+        moveTenRight(board);
+        moveTenDown(board);
+        board.drop(Tetromino.O_SHAPE);
+        board.moveRight();
+        board.moveRight();
+        moveTenDown(board);
+        board.drop(Tetromino.O_SHAPE);
+        moveTenDown(board);
+        board.drop(Tetromino.O_SHAPE);
+        board.moveLeft();
+        board.moveLeft();
+        moveTenDown(board);
+        board.drop(Tetromino.I_SHAPE);
+        moveTenLeft(board);
+        moveTenDown(board);
+        board.drop(Tetromino.I_SHAPE);
+        board.moveRight();
+        moveTenDown(board);
+        board.drop(Tetromino.T_SHAPE);
+        board.rotateRight();
+        moveTenLeft(board);
+        moveTenDown(board);
+        board.drop(Tetromino.O_SHAPE);
+        moveTenRight(board);
+        moveTenDown(board);
+
+        expect(board.toString()).to.equalShape(
+            `..........
+             ..........
+             ..........
+             ..........
+             T.......OO
+             T.OOOOOOOO`
+          );
+
+    });
 
 });
