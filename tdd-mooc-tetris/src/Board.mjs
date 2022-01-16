@@ -1,3 +1,4 @@
+
 import { Utils } from "./Utils.mjs";
 
 export class Board {
@@ -132,6 +133,7 @@ export class Board {
   }
 
   checkLineFull() {
+    let fullRows = []
     for (let row = 0; row < this.height; row++) {
       let full = true;
       for (let col = 0; col < this.width; col++) {
@@ -140,10 +142,16 @@ export class Board {
         }
       }
       if (full) {
-        this.stoppedBlocks[row].fill(this.EMPTY)
-        this.makeStoppedBlocksFall();
+        fullRows = fullRows.concat(row)
       }
     }
+    if(fullRows.length > 0) {
+      for (let i = 0; i < fullRows.length; i++) {
+        this.stoppedBlocks[fullRows[i]].fill(this.EMPTY)
+      }
+      this.makeStoppedBlocksFall();
+    }
+    
   }
 
   makeStoppedBlocksFall() {
@@ -155,6 +163,7 @@ export class Board {
         this.stoppedBlocks[newRow][col] = temp;
       }
     }
+    this.checkLineFull()
   }
 
   findRowToFallIn(row, col) {
