@@ -5,6 +5,8 @@ export class Board {
   width;
   height;
   fallingBlock;
+  fallingBlockRow;
+  fallingBlockColumn;
   EMPTY;
   stoppedBlocks;
 
@@ -26,39 +28,40 @@ export class Board {
     return board;
   }
 
-  setFallingBlockAfterKick(block) {
-    if(!this.runBlockConstrainCheck(this.checkOverlap, block)) {
+  setFallingBlockAfterKick(block, newCol) {
+    if(!this.runBlockConstrainCheck(this.checkOverlap, block, newCol)) {
       this.fallingBlock = block;
+      this.fallingBlockColumn = newCol;
       return true;
     }
     return false;
   }
 
   checkKick(block) {
-    if(this.setFallingBlockAfterKick(block)) {
+    if(this.setFallingBlockAfterKick(block, this.fallingBlockColumn)) {
       return;
     }
-    let col = block.column;
-    block.column--;
-    if(this.setFallingBlockAfterKick(block)) {
+    let col = this.fallingBlockColumn;
+    col--;
+    if(this.setFallingBlockAfterKick(block, col)) {
       return;
     }
-    block.column = col;
-    block.column++;
-    if(this.setFallingBlockAfterKick(block)) {
+    col = this.fallingBlockColumn;
+    col++;
+    if(this.setFallingBlockAfterKick(block, col)) {
       return
     }
-    block.column = col;
-    block.column -= 2;
-    if(this.setFallingBlockAfterKick(block)) {
+    col = this.fallingBlockColumn;
+    col -= 2;
+    if(this.setFallingBlockAfterKick(block, col)) {
       return
     }
-    block.column = col;
-    block.column += 2;
-    if(this.setFallingBlockAfterKick(block)) {
+    col = this.fallingBlockColumn;
+    col += 2;
+    if(this.setFallingBlockAfterKick(block, col)) {
       return
     }
-    block.column = col;
+    this.fallingBlockColumn = col;
   }
 
   rotateLeft() {
@@ -76,9 +79,9 @@ export class Board {
     if (this.hasFalling()) {
       throw "already falling"
     }
-    block.setColumn(this.findMiddleOfBoard())
+    this.fallingBlockColumn = this.findMiddleOfBoard()-1;
     this.fallingBlock = block;
-    this.fallingBlock.row = 0;
+    this.fallingBlockRow = 0;
     this.fallingBlock.rotated = false;
   }
 
@@ -99,21 +102,21 @@ export class Board {
       this.fallingBlock = null;
       return;
     }
-    this.fallingBlock.row++;
+    this.fallingBlockRow++;
   }
 
   moveLeft() {
     if (!this.hasFalling() || this.runBlockConstrainCheck(this.checkCanMoveLeft)) {
       return;
     }
-    this.fallingBlock.column--;
+    this.fallingBlockColumn--;
   }
 
   moveRight() {
     if (!this.hasFalling() || this.runBlockConstrainCheck(this.checkCanMoveRight)) {
       return;
     }
-    this.fallingBlock.column++;
+    this.fallingBlockColumn++;
   }
 
   moveDown() {
@@ -125,7 +128,7 @@ export class Board {
     for (let row = 0; row < size; row++) {
       for (let col = 0; col < size; col++) {
         if (this.fallingBlock.shape[row][col] == this.fallingBlock.color){
-          this.stoppedBlocks[row+this.fallingBlock.row][col+this.fallingBlock.column] = this.fallingBlock.color;
+          this.stoppedBlocks[row+this.fallingBlockRow][col+this.fallingBlockColumn] = this.fallingBlock.color;
         }
       }
     }
@@ -175,12 +178,12 @@ export class Board {
     }
   }
 
-  runBlockConstrainCheck(checker, block = this.fallingBlock) {
+  runBlockConstrainCheck(checker, block = this.fallingBlock, newCol = this.fallingBlockColumn) {
     let size = block.shape.length;
     for (let row = 0; row < size; row++) {
       for (let col = 0; col < size; col++) {
         if (block.shape[row][col] == block.color) {
-          if (checker(row, col, block, this.height, this.width, this.stoppedBlocks, this.EMPTY)) {
+          if (checker(row, col, block, this.height, this.width, this.stoppedBlocks, this.EMPTY, this.fallingBlockRow, newCol)) {
             return true;
           }
         }
@@ -189,39 +192,39 @@ export class Board {
     return false;
   }
 
-  checkOverlap(row, col, block, height, width, stoppedBlocks, EMPTY) {
-    if (row+block.row >= height || col+block.column >= width || col+block.column < 0) {
+  checkOverlap(row, col, block, height, width, stoppedBlocks, EMPTY, fallingBlockRow, fallingBlockColumn) {
+    if (row+fallingBlockRow >= height || col+fallingBlockColumn >= width || col+fallingBlockColumn < 0) {
       return true;
     }
-    return stoppedBlocks[row + block.row][col + block.column] != EMPTY;
+    return stoppedBlocks[row + fallingBlockRow][col + fallingBlockColumn] != EMPTY;
   }
 
-  checkCanMoveDown(row, col, block, height, width, stoppedBlocks, EMPTY) {
-    if (row+block.row == height-1) {
+  checkCanMoveDown(row, col, block, height, width, stoppedBlocks, EMPTY, fallingBlockRow, fallingBlockColumn) {
+    if (row+fallingBlockRow == height-1) {
       return true
     }
-    return stoppedBlocks[row+block.row+1][block.column+col] != EMPTY;
+    return stoppedBlocks[row+fallingBlockRow+1][fallingBlockColumn+col] != EMPTY;
   }
 
-  checkCanMoveLeft(row, col, block, height, width, stoppedBlocks, EMPTY) {
-    if (col+block.column <= 0) {
+  checkCanMoveLeft(row, col, block, height, width, stoppedBlocks, EMPTY, fallingBlockRow, fallingBlockColumn) {
+    if (col+fallingBlockColumn <= 0) {
       return true;
     }
-    return stoppedBlocks[row+block.row][block.column+col-1] != EMPTY;
+    return stoppedBlocks[row+fallingBlockRow][fallingBlockColumn+col-1] != EMPTY;
   }
 
-  checkCanMoveRight(row, col, block, height, width, stoppedBlocks, EMPTY) {
-    if(col+block.column == width -1) {
+  checkCanMoveRight(row, col, block, height, width, stoppedBlocks, EMPTY, fallingBlockRow, fallingBlockColumn) {
+    if(col+fallingBlockColumn == width -1) {
       return true;
     }
-    return stoppedBlocks[row+block.row][block.column+col+1] != EMPTY
+    return stoppedBlocks[row+fallingBlockRow][fallingBlockColumn+col+1] != EMPTY
   }
 
   draw(row,col, board) {
     if(this.hasFalling()) {
-      if(col >= this.fallingBlock.column && col < this.fallingBlock.column + this.fallingBlock.shape.length) {
-        if (row >= this.fallingBlock.row && row < this.fallingBlock.row + this.fallingBlock.shape.length) {
-          if (this.fallingBlock.shape[row-this.fallingBlock.row][col-this.fallingBlock.column] == this.fallingBlock.color) {
+      if(col >= this.fallingBlockColumn && col < this.fallingBlockColumn + this.fallingBlock.shape.length) {
+        if (row >= this.fallingBlockRow && row < this.fallingBlockRow + this.fallingBlock.shape.length) {
+          if (this.fallingBlock.shape[row-this.fallingBlockRow][col-this.fallingBlockColumn] == this.fallingBlock.color) {
             return board + this.fallingBlock.color;
           }
         }

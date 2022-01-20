@@ -4,13 +4,12 @@ export class RotatingShape {
     shape;
     currentPosition;
     color;
-    row;
-    column;
+    
+    //column;
 
-    constructor(color = "x", row = 0, column = 0, currentPosition = 0) {
-        this.color = color;
-        this.row = row;
-        this.column = column;
+    constructor(color = "x", currentPosition = 0) {
+        this.color = color;  
+        //this.column = column;
         this.currentPosition = currentPosition;
         this.createShape();
     }
@@ -156,7 +155,7 @@ export class RotatingShape {
         } else {
             pos = this.currentPosition + 1;
         }
-        return new RotatingShape(this.color, this.row, this.column, pos)
+        return new RotatingShape(this.color, pos)
     }
 
     rotateRight() {
@@ -166,7 +165,7 @@ export class RotatingShape {
         } else {
             pos = this.currentPosition - 1;
         }
-        return new RotatingShape(this.color, this.row, this.column, pos)
+        return new RotatingShape(this.color, pos)
     }
 
 }
