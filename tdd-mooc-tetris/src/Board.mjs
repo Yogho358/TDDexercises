@@ -9,6 +9,7 @@ export class Board {
   fallingBlockColumn;
   EMPTY;
   stoppedBlocks;
+  scoreCounter;
 
   constructor(width, height) {
     this.width = width;
@@ -26,6 +27,10 @@ export class Board {
       board += "\n"
     }
     return board;
+  }
+
+  setScoreCounter(scoreCounter) {
+    this.scoreCounter = scoreCounter;
   }
 
   setFallingBlockAfterKick(block, newCol) {
@@ -149,6 +154,9 @@ export class Board {
       }
     }
     if(fullRows.length > 0) {
+      if(this.scoreCounter) {
+        this.scoreCounter.addScore(fullRows.length)
+      }
       for (let i = 0; i < fullRows.length; i++) {
         this.stoppedBlocks[fullRows[i]].fill(this.EMPTY)
       }
